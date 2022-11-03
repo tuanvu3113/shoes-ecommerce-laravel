@@ -1,0 +1,234 @@
+img {
+    max-width: 100%;
+    border-radius: 1px;
+}
+img {
+    vertical-align: middle;
+    border-style: none;
+}
+
+.modal-backdrop {
+    position: unset !important;
+}
+
+.modal-open{
+    overflow:hidden !important;
+}
+
+.dataTables_wrapper {
+    width: 100% !important;
+}
+
+.dataTables_info {
+    display: none !important;
+}
+
+.red {
+    color: red !important;
+}
+
+.checkboxAll {
+    position: relative;
+    margin-left: 36px;
+}
+
+.checkboxOne {
+    position: relative;
+    margin-left: 20px;
+}
+
+.ms-choice {
+    /*border-radius: 30px !important;*/
+    height: 40px !important;
+    line-height: 40px !important;
+}
+.ms-choice .placeholder{
+    background-color: white !important;
+}
+
+.ms-choice > span.placeholder {
+    color: #000 !important;
+}
+
+.ms-choice>div {
+    top: 3px !important;
+    height: 35px !important;
+}
+
+.ms-choice>span {
+    left: 15px !important;
+}
+
+::-webkit-input-placeholder {
+    font-style: italic;
+}
+
+:-moz-placeholder {
+    /* Firefox 18- */
+    font-style: italic;
+}
+
+::-moz-placeholder {
+    /* Firefox 19+ */
+    font-style: italic;
+}
+
+.multiple {
+    width: auto;
+    min-width: 100%;
+}
+
+.ms-drop input[type="checkbox"] {
+    vertical-align: top;
+}
+
+.highlight-row td {
+   background-color: #d4f2ff !important;
+}
+
+/* START Notify */
+.minileftbar .menu_list .notify .heartbit {
+    background-color: red !important;
+}
+.minileftbar .menu_list .notify .point {
+    background-color: red !important;
+}
+.notify .heartbit {
+    border-color: red !important;
+}
+/* END Notify */
+
+.blockOverlay {
+    background-color: gray !important;
+}
+
+.notif-contact, .notif-events{
+    -moz-transition:all 0.5s;
+    -o-transition:all 0.5s;
+    -webkit-transition:all 0.5s;
+    transition:all 0.5s;font-family:"Muli",sans-serif;
+    border-radius:.1875rem;
+    width:290px;height:calc(100vh - 20px);
+    margin:10px;
+    background:#f4f7f6;
+    position:fixed;
+    top:0px;
+    left:50px;
+    z-index:20;
+    left:-900px
+}
+
+.notif-contact.open{
+    left:50px
+}
+.notif-events.open{
+    left:50px
+}
+
+.closeNotify:hover{
+    color: black !important;
+}
+
+.btn-link:hover {
+    color: #4e58aa !important;
+}
+
+.globe-langue{
+    color: black !important;
+}
+.globe-langue:hover{
+    color: gray !important;
+}
+
+/*a:hover{
+    color: #f7754a !important;
+}*/
+
+.input-group-focus .input-group-addon {
+    border-color: #E3E3E3 !important;
+}
+
+table td{
+    white-space: unset !important;
+}
+
+/* START Scroll top button */
+#toTop {
+    position: fixed;
+    right: 0;
+    opacity: 0;
+    visibility: hidden;
+    bottom: 25px;
+    margin: 0 25px 0 0;
+    z-index: 999;
+    transition: 0.35s;
+    transform: scale(0.7);
+    width: 46px;
+    height: 46px;
+    /* background-color: rgba(0, 0, 0, 0.6); */
+    opacity: 1;
+    transition: all 0.3s;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 24px;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
+    padding-top: 6px;
+}
+
+#toTop.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+#toTop:after {
+    position: relative;
+    display: block;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+#toTop:hover {
+    background-color: #888;
+}
+.theme-black #toTop{
+    background-color: rgba(0, 0, 0, 0.6) !important;
+}
+.theme-purple #toTop{
+    background-color: #ac68cc !important;
+}
+.theme-blue #toTop{
+    background-color: #3eacff !important;
+}
+.theme-cyan #toTop{
+    background-color: #49c5b6 !important;
+}
+.theme-green #toTop{
+    background-color: #50d38a !important;
+}
+.theme-orange #toTop{
+    background-color: #ffce4b !important;
+}
+.theme-blush #toTop{
+    background-color: #f38f9b !important;
+}
+/* END Scroll top button */
+
+.sweet-alert h2 {
+    font-size: 17px !important;
+}
+.sweet-alert button {
+    font-size: 15px !important;
+}
+
+#listData_filter {
+    display: none !important;
+}
+
+.sorting_disabled {
+    padding-left: 15px !important;
+    padding-right: 36px !important;
+}
