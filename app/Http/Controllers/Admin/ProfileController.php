@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Session;
+use Illuminate\Support\Facades\Session;
+
 
 class ProfileController extends Controller
 {
@@ -16,7 +17,7 @@ class ProfileController extends Controller
         $login = Session::get('login');
         $name = isset($login->username) ? $login->username : '';
         $html = '
-            <span class="d-none d-xl-inline-block ms-1 fw-medium">'.$name.'</span>
+            <span class="d-none d-xl-inline-block ms-1 fw-medium">' . $name . '</span>
             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
         ';
         return $html;

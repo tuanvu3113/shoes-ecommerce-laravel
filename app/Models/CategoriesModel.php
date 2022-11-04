@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class CategoriesModel extends Model
 {
-   public function getCategories()
-   {
+    public function getCategories()
+    {
         $rs_categories = [];
         $rs_categories_tmp = DB::table('ecommerce_news_categories')
             ->select('*')
@@ -21,5 +21,5 @@ class CategoriesModel extends Model
             }
         }
         return $rs_categories;
-   }
+    }
 }

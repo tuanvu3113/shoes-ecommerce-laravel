@@ -3,33 +3,32 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use DB;
-use Cookie;
-use Validator;
-use Session;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cookie;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\Request;
 use App\Models\SecurityModel;
 
 class SecurityController extends Controller
 {
     protected $model;
-    public function __construct(){
+    public function __construct()
+    {
         $this->model = new SecurityModel();
     }
 
     public function view()
     {
         $data = array();
-        if(isset($_COOKIE['gdt_user'])){
+        if (isset($_COOKIE['gdt_user'])) {
             $data['username'] = $_COOKIE['gdt_user'];
-        }
-        else{
+        } else {
             $data['username'] = '';
         }
-        if(isset($_COOKIE['gdt_pass'])){
+        if (isset($_COOKIE['gdt_pass'])) {
             $data['password'] = $_COOKIE['gdt_pass'];
-        }
-        else{
+        } else {
             $data['password'] = '';
         }
         return view('Admin.security.view')->with(['datas' => $data]);
@@ -45,7 +44,7 @@ class SecurityController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 "status" => 0,
-                "token"=>csrf_token()
+                "token" => csrf_token()
             ], 200);
         }
         $u = $request->username;
@@ -53,12 +52,12 @@ class SecurityController extends Controller
         $GMTTime = date("Y-m-d H:i:s");
         $remember = $request->remember;
         $captcha = md5($request->captcha);
-        $pass = md5(md5($p). "eCommerce@WEB");
+        $pass = md5(md5($p) . "eCommerce@WEB");
         if (!empty($u) && !empty($p)) {
             $login = $this->model->login($u);
             // var_dump($login);die;
             if (!empty($login[0])) {
-                if ($pass == $login[0]->password){ // compare password success
+                if ($pass == $login[0]->password) { // compare password success
                     session()->regenerate();
                     // set session
                     $login[0]->logtime = $GMTTime;
@@ -71,30 +70,27 @@ class SecurityController extends Controller
                     Session::put('menus', $listmenu);
                     Session::put('language', $lang);
 
-                    if($remember == 1){
+                    if ($remember == 1) {
                         Cookie::queue('gdt_user', $u, time() + (86400 * 7), "/");
                         Cookie::queue('gdt_pass', $p, time() + (86400 * 7), "/");
-                    }
-                    else{
+                    } else {
                         Cookie::queue('gdt_user', '', time() + (86400 * 7), "/");
                         Cookie::queue('gdt_pass', '', time() + (86400 * 7), "/");
                     }
                     return response()->json([
                         "status" => 1,
-                        "token"=>csrf_token()
+                        "token" => csrf_token()
                     ], 200);
-                }
-                else {
+                } else {
                     return response()->json([
                         "status" => 0,
-                        "token"=>csrf_token()
+                        "token" => csrf_token()
                     ], 200);
                 }
-            }
-            else {
+            } else {
                 return response()->json([
                     "status" => 0,
-                    "token"=>csrf_token()
+                    "token" => csrf_token()
                 ], 200);
             }
         }

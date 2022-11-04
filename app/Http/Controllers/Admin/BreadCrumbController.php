@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Session;
+use Illuminate\Support\Facades\Session;
+
 
 class BreadCrumbController extends Controller
 {
@@ -17,7 +18,7 @@ class BreadCrumbController extends Controller
         $controller = str_replace("admin.", "", Route::getCurrentRoute()->getName());
         $lang = Session::get('language');
         $pid = DB::table('ecommerce_menus')
-            ->select('parent', 'name','route', 'keylang')
+            ->select('parent', 'name', 'route', 'keylang')
             ->where('route', $controller)
             ->where('isdelete', 0)
             ->get();
@@ -29,12 +30,12 @@ class BreadCrumbController extends Controller
             }
         }
 
-        if(empty($pid[0]->name)){
+        if (empty($pid[0]->name)) {
             return '<li></li>';
         }
         $arr = array();
         $breadcrumb = '';
-        (new BreadCrumbController)->getParent($pid[0]->parent, $arr,$lang);
+        (new BreadCrumbController)->getParent($pid[0]->parent, $arr, $lang);
         // echo'<pre>';print_r($pid[0]->parent);die;
         $c = count($arr) - 1;
         for ($i = $c; $i >= 0; $i--) {
@@ -42,16 +43,17 @@ class BreadCrumbController extends Controller
         }
         $pagename = $pid[0]->name;
         $route = $pid[0]->route;
-        if(isset($lang['menu'][trim($pid[0]->keylang)])){
+        if (isset($lang['menu'][trim($pid[0]->keylang)])) {
             $pagename = $lang['menu'][trim($pid[0]->keylang)];
         }
-        $breadcrumb .= '<li class="breadcrumb-item active"></li><li class="breadcrumb-item active">'.$pagename.'</li>';
+        $breadcrumb .= '<li class="breadcrumb-item active"></li><li class="breadcrumb-item active">' . $pagename . '</li>';
         return $breadcrumb;
     }
 
-    function getParent($id, &$arr,$lang) {
+    function getParent($id, &$arr, $lang)
+    {
         $parent = DB::table('ecommerce_menus')
-            ->select('id','route', 'name','parent', 'keylang')
+            ->select('id', 'route', 'name', 'parent', 'keylang')
             ->where('id', $id)
             ->where('isdelete', 0)
             ->get();
@@ -59,15 +61,15 @@ class BreadCrumbController extends Controller
         $pid = $parent[0]->parent;
         $route = $parent[0]->route;
         $pagename = $parent[0]->name;
-        if(isset($lang['menu'][trim($parent[0]->keylang)])){
+        if (isset($lang['menu'][trim($parent[0]->keylang)])) {
             $pagename = $lang['menu'][trim($parent[0]->keylang)];
         }
-        if($route != '' && $route != '#'){
-            $link = '/'.$route;
-        }else{
+        if ($route != '' && $route != '#') {
+            $link = '/' . $route;
+        } else {
             $link = $route;
         }
-        $breadcrumb = '<li><a href="'.$link.'">'.$pagename.'</a><!--<i class="fa fa-angle-right"></i>--></li>';
+        $breadcrumb = '<li><a href="' . $link . '">' . $pagename . '</a><!--<i class="fa fa-angle-right"></i>--></li>';
         array_push($arr, $breadcrumb);
     }
 }

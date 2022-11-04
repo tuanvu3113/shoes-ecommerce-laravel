@@ -13,15 +13,16 @@ use App\Models\CategoriesModel;
 use App\Models\NewsModel;
 use App\Models\BaseModel;
 use App\Models\ExcelModel;
-use Session;
-use Validator;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class NewsController extends Controller
 {
     private $route;
     private $login;
 
-    function __construct() {
+    function __construct()
+    {
         if (in_array('__construct', get_class_methods(get_parent_class($this)))) {
             parent::__construct();
         }
@@ -35,14 +36,14 @@ class NewsController extends Controller
         $_SESSION["title"] = 'Tin tức';
     }
 
-    public function checkPermission($action = 'view') {
+    public function checkPermission($action = 'view')
+    {
         $class = get_class($this);
         $login = Session::get('login');
         // echo'<pre>';print_r($login->params[$this->route]['view']);die;
         if (empty($login->username)) { //Chưa đăng nhập
             return redirect('/admin');
-        }
-        else if (!isset($login->params[$this->route]->$action)) {
+        } else if (!isset($login->params[$this->route]->$action)) {
             return redirect('/admin');
         }
     }
@@ -59,10 +60,11 @@ class NewsController extends Controller
         $controller = $this->route;
         $permission = $this->base_model->getPermission($login, $this->route);
         $csrfHash = csrf_token();
-        return view('Admin.news.view', compact('getCategories','controller','csrfHash', 'permission'));
+        return view('Admin.news.view', compact('getCategories', 'controller', 'csrfHash', 'permission'));
     }
 
-    function getList(Request $request) {
+    function getList(Request $request)
+    {
         $numrows = 20;
         $page = $request->page;
         $search = json_decode($request->search, true);
@@ -78,30 +80,33 @@ class NewsController extends Controller
         $getCategories = $this->categories_model->getCategories();
         $result['csrfHash'] = csrf_token();
         $routes = $this->route;
-        $result['content'] = view('Admin.news.list', compact('datas','start','permission','getCategories','routes'))->render();
+        $result['content'] = view('Admin.news.list', compact('datas', 'start', 'permission', 'getCategories', 'routes'))->render();
         return json_encode($result);
     }
 
-    function mysave(Request $request) {
+    function mysave(Request $request)
+    {
         $id = $request->id;
         $fdata = $request->fdata;
-        @rename(public_path()."/assets/images/blog/tmp/" . $fdata['news_image'], public_path()."/assets/images/blog/" . $fdata['news_image']);
-        @rename(public_path()."/assets/images/blog/tmp/" . $fdata['news_image_right'], public_path()."/assets/images/blog/" . $fdata['news_image_right']);
+        @rename(public_path() . "/assets/images/blog/tmp/" . $fdata['news_image'], public_path() . "/assets/images/blog/" . $fdata['news_image']);
+        @rename(public_path() . "/assets/images/blog/tmp/" . $fdata['news_image_right'], public_path() . "/assets/images/blog/" . $fdata['news_image_right']);
         $result = $this->model->mysave($id, $fdata);
         return $result;
     }
 
-    function getEdit($id) {
+    function getEdit($id)
+    {
         $login = Session::get('login');
         $permission = $this->base_model->getPermission($login, $this->route);
         $routes = $this->route;
         $controller = $this->route;
         $getNewsCategories = $this->categories_model->getCategories();
         $detail = $this->model->getItemDetail($id);
-        return view('Admin.news.from', compact('permission','routes','login','controller','getNewsCategories','detail'));
+        return view('Admin.news.from', compact('permission', 'routes', 'login', 'controller', 'getNewsCategories', 'detail'));
     }
 
-    function ispopular(Request $request) {
+    function ispopular(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'id' => 'required',
         ]);
@@ -114,7 +119,8 @@ class NewsController extends Controller
         $this->model->change_is_popular($id, $status);
         return "success";
     }
-    function isshow(Request $request) {
+    function isshow(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'id' => 'required',
         ]);
@@ -128,7 +134,8 @@ class NewsController extends Controller
         return "success";
     }
 
-    function setposition(Request $request) {
+    function setposition(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'position' => 'required',
         ]);
@@ -142,8 +149,9 @@ class NewsController extends Controller
         return "success";
     }
 
-    function uploadFile(Request $request) {
-        if($request->file('file')) {
+    function uploadFile(Request $request)
+    {
+        if ($request->file('file')) {
             $file = $request->file('file');
             $filename = $file->getClientOriginalName();
 
@@ -154,19 +162,19 @@ class NewsController extends Controller
             $location = 'assets/images/blog/tmp/';
 
             // Upload file
-            $file->move($location,$filename);
+            $file->move($location, $filename);
             $rs["status"] = "pass";
             $rs["filename"] = $filename;
             return json_encode($rs);
-        }
-        else {
+        } else {
             $rs["status"] = "fail";
             $rs["filename"] = '';
             return json_encode($rs);
         }
     }
 
-    function delete(Request $request) {
+    function delete(Request $request)
+    {
         $login = Session::get('login');
         $permission = $this->base_model->getPermission($login, $this->route);
         if (!isset($permission['delete'])) {

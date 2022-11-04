@@ -7,7 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Session;
+use Illuminate\Support\Facades\Session;
+
 
 class MenuController extends Controller
 {
@@ -25,7 +26,6 @@ class MenuController extends Controller
             ->get();
         $permission = json_decode($group[0]->permission, true);
         $right = "";
-        // echo'<pre>';print_r(count($permission));die;
         if (count($permission) == 0) {
             return "";
         }
@@ -33,9 +33,9 @@ class MenuController extends Controller
             $right .= "," . $key;
         }
         $right = substr($right, 1);
-        $lang = "vn";
+        $lang = Session::get("language");
         $parent_menu = DB::table('ecommerce_menus')
-            ->select('name as menuName','keylang','ordering','classicon', 'route as controller', 'id as pageid')
+            ->select('name as menuName', 'keylang', 'ordering', 'classicon', 'route as controller', 'id as pageid')
             ->where('parent', 0)
             ->where('isdelete', 0)
             ->orderByRaw('ordering ASC')
@@ -84,15 +84,16 @@ class MenuController extends Controller
 
     public function getChildren($id, $right, $lang)
     {
-        $children = \DB::select('
+        $children = DB::select(
+            '
             SELECT gm.name AS menuName, gm.keylang, gm.ordering,
             gm.route AS controller, gm.classicon, gm.id AS pageid
             FROM ecommerce_menus gm
-            WHERE gm.parent = '.$id.'
+            WHERE gm.parent = ' . $id . '
                 AND gm.isdelete = 0
                 AND (
-                    gm.id IN ('.$right.') OR
-                    gm.id IN (SELECT mm.parent FROM ecommerce_menus mm WHERE mm.route IN ('.$right.'))
+                    gm.id IN (' . $right . ') OR
+                    gm.id IN (SELECT mm.parent FROM ecommerce_menus mm WHERE mm.route IN (' . $right . '))
                 )
             ORDER BY gm.ordering ASC'
         );
@@ -123,7 +124,7 @@ class MenuController extends Controller
             } else {
                 $menu .= '
                     <li>
-                        <a href="'. ($item->controller) . '">
+                        <a href="' . ($item->controller) . '">
                             <span data-key="">' . $menuName . '</span>
                         </a>
                     </li>

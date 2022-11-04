@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -22,9 +22,9 @@ class HomeController extends Controller
     public function getSlides()
     {
         $query = DB::table('ecommerce_home')->select('json_pictures')
-        ->where('is_delete',  0)
-        ->where('is_publish', 1)
-        ->get();
+            ->where('is_delete',  0)
+            ->where('is_publish', 1)
+            ->get();
         $json_pictures = !empty($query[0]) ? $query[0]->json_pictures : '';
         return $json_pictures;
     }

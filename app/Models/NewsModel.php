@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class NewsModel extends Model
 {
@@ -36,7 +36,7 @@ class NewsModel extends Model
         return $obj;
     }
 
-   function getSearch($search)
+    function getSearch($search)
     {
         $sql = "";
         if (!empty($search['title'])) {
@@ -75,7 +75,7 @@ class NewsModel extends Model
         if ($numrows > 0) {
             $sql .= ' LIMIT ' . (($page - 1) * $numrows) . ',' . $numrows;
         }
-        $query = \DB::select($sql);
+        $query = DB::select($sql);
         return $query;
     }
 
@@ -87,7 +87,7 @@ class NewsModel extends Model
             WHERE isdelete = 0
         ";
         $sql .= $this->getSearch($search);
-        $query = \DB::select($sql);
+        $query = DB::select($sql);
         if (empty($query[0]->total)) {
             return 0;
         } else {
@@ -106,7 +106,7 @@ class NewsModel extends Model
                 FROM ecommerce_news
                 WHERE id='" . $id . "' AND isdelete = 0
             ";
-            $rs = \DB::select($sql);
+            $rs = DB::select($sql);
             if (count($rs) > 0) {
                 $obj = $rs[0];
             } else {
@@ -126,9 +126,9 @@ class NewsModel extends Model
             $data['link'] = trim($data['link'], '-');
             if (empty($id)) {
                 $check = DB::table('ecommerce_news')
-                ->select('*')
-                ->where('news_title', $data['news_title'])
-                ->get();
+                    ->select('*')
+                    ->where('news_title', $data['news_title'])
+                    ->get();
                 if (!empty($rs_categories_tmp[0])) {
                     $rs["status"] = "exist";
                     return json_encode($rs);
@@ -139,11 +139,11 @@ class NewsModel extends Model
                 unset($data['date_created']);
                 $data['date_update'] = gmdate("Y-m-d H:i:s ", time() + 7 * 3600);
                 DB::table('ecommerce_news')
-                ->where('id', $id)
-                ->update($data);
+                    ->where('id', $id)
+                    ->update($data);
             }
             $rs["status"] = "success";
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $rs["status"] = "fail";
         }
         return json_encode($rs);
@@ -157,18 +157,18 @@ class NewsModel extends Model
 
     function change_is_show($id, $status)
     {
-        DB::update('UPDATE ecommerce_news SET isshow = ? WHERE id = ?',[$status,$id]);
+        DB::update('UPDATE ecommerce_news SET isshow = ? WHERE id = ?', [$status, $id]);
     }
 
     function change_is_popular($id, $status)
     {
-        DB::update('UPDATE ecommerce_news SET popular = ? WHERE id = ?',[$status,$id]);
+        DB::update('UPDATE ecommerce_news SET popular = ? WHERE id = ?', [$status, $id]);
     }
 
     function setposition($arr)
     {
         foreach ($arr as $item) {
-            DB::update('UPDATE ecommerce_news SET position = ? WHERE id = ?',[$item->position,$item->id]);
+            DB::update('UPDATE ecommerce_news SET position = ? WHERE id = ?', [$item->position, $item->id]);
         }
     }
 }

@@ -4,7 +4,7 @@ $(document).ready(function () {
     // setInterval(function() {
     //     getNotify();
     // }, 20000);
-    // getNotify();
+    getNotify();
     $(document).on('click', '.turnoff-notify', function (e) {
         var id = $(this).attr('id');
         var action = "";
@@ -24,7 +24,7 @@ $(document).ready(function () {
             action = 'notify-review';
         }
         $.ajax({
-            url: '/admin.php/home/turnOffNotify',
+            url: '/admin/home/turn-off-notify',
             async: false,
             type: 'POST',
             data: {
@@ -42,7 +42,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.text-decoration-underline', function (e) {
         $.ajax({
-            url: '/admin.php/home/turnOffNotify',
+            url: '/admin/home/turn-off-notify',
             async: false,
             type: 'POST',
             data: {
@@ -59,7 +59,7 @@ $(document).ready(function () {
 
     $(document).on('click', '.replyContact', function (e) {
         var id_contact = $(this).attr('id_contact');
-        window.location = "/admin.php/contact?id_contact=" + id_contact;
+        window.location = "/admin/contact?id_contact=" + id_contact;
     });
     $(document).on('click', '.viewOrder', function (e) {
         var id_order = $(this).attr('id_order');
@@ -68,19 +68,19 @@ $(document).ready(function () {
         obj['id_order'] = id_order;
         obj['code_order'] = code_order;
         var searchs = JSON.stringify(obj);
-        window.location = "/admin.php/orders?datas=" + searchs;
+        window.location = "/admin/orders?datas=" + searchs;
     });
     $(document).on('click', '.viewComment', function (e) {
         var id = $(this).attr('id');
-        window.location = "/admin.php/comments?id=" + id;
+        window.location = "/admin/comments?id=" + id;
     });
     $(document).on('click', '.viewReview', function (e) {
         var id = $(this).attr('id');
-        window.location = "/admin.php/reviews?id=" + id;
+        window.location = "/admin/reviews?id=" + id;
     });
     $(document).on('click', '.viewEvents', function (e) {
         var id = $(this).attr('id');
-        window.location = "/admin.php/calendar?id=" + id;
+        window.location = "/admin/calendar?id=" + id;
     });
     // END Xử lý Notify Order
 
@@ -370,7 +370,7 @@ function loadingForm(s) {
 
 function getNotify() {
     $.ajax({
-        url: '/admin.php/home/getNotify',
+        url: "/admin/get-notify",
         async: false,
         type: 'POST',
         success: function (r) {

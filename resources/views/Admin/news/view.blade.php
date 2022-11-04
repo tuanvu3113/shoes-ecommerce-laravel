@@ -291,22 +291,22 @@
             },
             success: function(datas) {
                 loadingForm(false);
-                // $('#listData').DataTable().clear().destroy();
+                $('#listData').DataTable().clear().destroy();
                 var obj = JSON.parse(datas);
                 cpage = obj.cPage;
                 $('.page_content').html(obj.content);
                 $("#paging").html(obj.paging);
                 $(".viewtotal").text(obj.viewtotal);
-                // $('#listData').DataTable({
-                //     "paging": false,
-                //     "info": false,
-                //     "fixedColumns": true,
-                //     "columnDefs": [{
-                //         "targets": [0, 1, 7, 8, 9, 10],
-                //         "orderable": false
-                //     }]
-                // });
-                // $('.sorting_asc').removeClass('sorting_asc');
+                $('#listData').DataTable({
+                    "paging": false,
+                    "info": false,
+                    "fixedColumns": true,
+                    "columnDefs": [{
+                        "targets": [0, 1, 7, 8, 9, 10],
+                        "orderable": false
+                    }]
+                });
+                $('.sorting_asc').removeClass('sorting_asc');
             },
             error: function() {
                 loadingForm(false);
