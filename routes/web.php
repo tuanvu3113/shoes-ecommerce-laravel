@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,19 +13,11 @@ use App\Http\Controllers\HomeController;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
 Route::group([
     'name' => 'front.',
     'prefix' => '/',
     'namespace' => 'Front',
 ], function () {
-
-    // No middleware here
-    // URL: /front/about-us
-    // Route name: front.about
     Route::get('/', 'HomeController@view')->name('home');
     Route::get('about.html', 'AboutController@view')->name('about');
     // Route::get('login', 'SecurityController@view')->name('user.login');
@@ -38,11 +29,6 @@ Route::group([
     'prefix' => 'admin',
     'namespace' => 'Admin',
 ], function () {
-
-    // No middleware here
-    // URL: /front/about-us
-    // Route name: front.about
-
     // Login
     Route::get('/', 'SecurityController@view')->name('admin');
     Route::get('login', 'SecurityController@view');
