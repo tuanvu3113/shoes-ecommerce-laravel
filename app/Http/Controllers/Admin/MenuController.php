@@ -3,10 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 
@@ -57,7 +54,7 @@ class MenuController extends Controller
                 $menu .= '
                     <li>
                         <a href="javascript: void(0);" class="has-arrow">
-                            <i class="bx ' . $item->classicon . '"></i>
+                            <i class="' . $item->classicon . '"></i>
                             <span>' . $menuName . '</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
@@ -70,7 +67,7 @@ class MenuController extends Controller
                     $menu .= '
                         <li>
                             <a href="' . ($item->controller) . '">
-                                <i class="bx ' . $item->classicon . '"></i>
+                                <i class="' . $item->classicon . '"></i>
                                 <span data-key="' . $item->classicon . '">' . $menuName . '</span>
                             </a>
                         </li>
@@ -113,7 +110,7 @@ class MenuController extends Controller
                 $menu .= '
                     <li>
                         <a href="javascript: void(0);" class="has-arrow">
-                            <i class="bx ' . $item->classicon . '"></i>
+                            <i class="' . $item->classicon . '"></i>
                             <span>' . $menuName . '</span>
                         </a>
                         <ul class="sub-menu" aria-expanded="false">
@@ -125,6 +122,7 @@ class MenuController extends Controller
                 $menu .= '
                     <li>
                         <a href="' . ($item->controller) . '">
+                            <i class="mdi mdi-record" style="font-size: 13px !important;"></i>
                             <span data-key="">' . $menuName . '</span>
                         </a>
                     </li>

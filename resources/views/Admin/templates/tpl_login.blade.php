@@ -27,8 +27,6 @@
 	<div class="auth-page">
 		@yield('content')
 	</div>
-	</div>
-
 	<script src="{{asset('assets/admin/libs/jquery/jquery.min.js')}}"></script>
 	<script src="{{asset('assets/admin/libs/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
 	<script src="{{asset('assets/admin/plugins/sweetalert/sweetalert.min.js')}}"></script> <!-- SweetAlert Plugin Js -->

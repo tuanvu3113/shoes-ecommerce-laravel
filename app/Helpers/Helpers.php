@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
+
 // base_path(); // Path of application root D:\xampp7\htdocs\shoes-ecommerce-laravel
 // storage_path(); // Path of storage D:\xampp7\htdocs\shoes-ecommerce-laravel\storage
 // app_path(); // Path of app D:\xampp7\htdocs\shoes-ecommerce-laravel\app
@@ -18,15 +20,18 @@ function getLanguage($keylang, $content)
 
 function admin_url()
 {
-    return '/admin/';
+    $host = request()->getHttpHost();
+    return $host . '/admin/';
 }
 
 function base_url()
 {
-    return '/';
+    $host = request()->getHttpHost();
+    return $host;
 }
 
 function url_tmpl()
 {
-    return '/';
+    $host = request()->getHttpHost();
+    return $host;
 }

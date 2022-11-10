@@ -186,7 +186,7 @@
                                         <h6 class="m-0"> Notifications </h6>
                                     </div>
                                     <div class="col-auto">
-                                        <a href="#!" class="small text-reset text-decoration-underline"> Unread (<span id="total_unread"></span>)</a>
+                                        <a href="#!" class="small text-reset text-decoration-underline"> Clear all (<span id="total_unread"></span>)</a>
                                     </div>
                                 </div>
                             </div>

@@ -20,6 +20,7 @@ class SecurityController extends Controller
 
     public function view()
     {
+
         $data = array();
         if (isset($_COOKIE['gdt_user'])) {
             $data['username'] = $_COOKIE['gdt_user'];
@@ -53,12 +54,19 @@ class SecurityController extends Controller
         $remember = $request->remember;
         $captcha = md5($request->captcha);
         $pass = md5(md5($p) . "eCommerce@WEB");
+        $captcha_check =  Session::get('captcha_eCommerce');
+        Session::forget("login");
+        if ($captcha != $captcha_check) {
+            return response()->json([
+                "status" => 0,
+                "token" => csrf_token()
+            ], 200);
+        }
         if (!empty($u) && !empty($p)) {
             $login = $this->model->login($u);
             // var_dump($login);die;
             if (!empty($login[0])) {
                 if ($pass == $login[0]->password) { // compare password success
-                    session()->regenerate();
                     // set session
                     $login[0]->logtime = $GMTTime;
                     $login[0]->params = $this->model->getRouter($login[0]->params);
@@ -101,5 +109,10 @@ class SecurityController extends Controller
         Session::forget("login");
         Session::forget("menus");
         return redirect('/admin');
+    }
+
+    function captcha(Request $request)
+    {
+        $captcha = $this->model->createCapcha('captcha_eCommerce');
     }
 }

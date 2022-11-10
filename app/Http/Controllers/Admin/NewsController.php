@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
@@ -13,8 +15,6 @@ use App\Models\CategoriesModel;
 use App\Models\NewsModel;
 use App\Models\BaseModel;
 use App\Models\ExcelModel;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
 
 class NewsController extends Controller
 {
@@ -27,8 +27,6 @@ class NewsController extends Controller
             parent::__construct();
         }
         $this->route = 'news';
-        $menu = Session::get('menus');
-        $this->title = isset($menu[$this->route]) ? $menu[$this->route] : $this->route;
         $this->categories_model = new CategoriesModel();
         $this->model = new NewsModel();
         $this->excel_model = new ExcelModel();
@@ -38,12 +36,8 @@ class NewsController extends Controller
 
     public function checkPermission($action = 'view')
     {
-        $class = get_class($this);
         $login = Session::get('login');
-        // echo'<pre>';print_r($login->params[$this->route]['view']);die;
-        if (empty($login->username)) { //Chưa đăng nhập
-            return redirect('/admin');
-        } else if (!isset($login->params[$this->route]->$action)) {
+        if (!isset($login->params[$this->route]->$action)) {
             return redirect('/admin');
         }
     }
@@ -57,10 +51,15 @@ class NewsController extends Controller
         $login = Session::get('login');
         $data = array();
         $getCategories = $this->categories_model->getCategories();
-        $controller = $this->route;
         $permission = $this->base_model->getPermission($login, $this->route);
         $csrfHash = csrf_token();
-        return view('Admin.news.view', compact('getCategories', 'controller', 'csrfHash', 'permission'));
+        $controller = $this->route;
+        return view('Admin.news.view', compact(
+            'getCategories',
+            'csrfHash',
+            'controller',
+            'permission'
+        ));
     }
 
     function getList(Request $request)
@@ -80,12 +79,22 @@ class NewsController extends Controller
         $getCategories = $this->categories_model->getCategories();
         $result['csrfHash'] = csrf_token();
         $routes = $this->route;
-        $result['content'] = view('Admin.news.list', compact('datas', 'start', 'permission', 'getCategories', 'routes'))->render();
+        $result['content'] = view('Admin.news.list', compact(
+            'datas',
+            'start',
+            'permission',
+            'routes',
+            'getCategories'
+        ))->render();
         return json_encode($result);
     }
 
     function mysave(Request $request)
     {
+        $permissions = $this->checkPermission('add');
+        if ($permissions instanceof RedirectResponse) {
+            return $permissions;
+        }
         $id = $request->id;
         $fdata = $request->fdata;
         @rename(public_path() . "/assets/images/blog/tmp/" . $fdata['news_image'], public_path() . "/assets/images/blog/" . $fdata['news_image']);
@@ -96,17 +105,30 @@ class NewsController extends Controller
 
     function getEdit($id)
     {
+        $permissions = $this->checkPermission('edit');
+        if ($permissions instanceof RedirectResponse) {
+            return $permissions;
+        }
         $login = Session::get('login');
         $permission = $this->base_model->getPermission($login, $this->route);
-        $routes = $this->route;
-        $controller = $this->route;
         $getNewsCategories = $this->categories_model->getCategories();
         $detail = $this->model->getItemDetail($id);
-        return view('Admin.news.from', compact('permission', 'routes', 'login', 'controller', 'getNewsCategories', 'detail'));
+        return view('Admin.news.from', compact(
+            'permission',
+            'routes',
+            'login',
+            'controller',
+            'getNewsCategories',
+            'detail'
+        ));
     }
 
     function ispopular(Request $request)
     {
+        $permissions = $this->checkPermission('edit');
+        if ($permissions instanceof RedirectResponse) {
+            return $permissions;
+        }
         $validator = Validator::make($request->all(), [
             'id' => 'required',
         ]);
@@ -119,8 +141,13 @@ class NewsController extends Controller
         $this->model->change_is_popular($id, $status);
         return "success";
     }
+
     function isshow(Request $request)
     {
+        $permissions = $this->checkPermission('edit');
+        if ($permissions instanceof RedirectResponse) {
+            return $permissions;
+        }
         $validator = Validator::make($request->all(), [
             'id' => 'required',
         ]);
@@ -136,6 +163,10 @@ class NewsController extends Controller
 
     function setposition(Request $request)
     {
+        $permissions = $this->checkPermission('edit');
+        if ($permissions instanceof RedirectResponse) {
+            return $permissions;
+        }
         $validator = Validator::make($request->all(), [
             'position' => 'required',
         ]);
@@ -151,6 +182,10 @@ class NewsController extends Controller
 
     function uploadFile(Request $request)
     {
+        $permissions = $this->checkPermission('edit');
+        if ($permissions instanceof RedirectResponse) {
+            return $permissions;
+        }
         if ($request->file('file')) {
             $file = $request->file('file');
             $filename = $file->getClientOriginalName();
@@ -175,6 +210,10 @@ class NewsController extends Controller
 
     function delete(Request $request)
     {
+        $permissions = $this->checkPermission('delete');
+        if ($permissions instanceof RedirectResponse) {
+            return $permissions;
+        }
         $login = Session::get('login');
         $permission = $this->base_model->getPermission($login, $this->route);
         if (!isset($permission['delete'])) {

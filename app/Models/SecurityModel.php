@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class SecurityModel extends Model
 {
@@ -73,5 +74,56 @@ class SecurityModel extends Model
             $arr[$item->route] = $item->name;
         }
         return $arr;
+    }
+
+    function createCapcha($name, $width = 160, $height = 33, $characters = 3)
+    {
+        $font = public_path() . '/assets/fonts/courbd.ttf';
+        $possible = '23456789abcdefghjkmnopqrstvwxyz';
+        $text = '';
+        $i = 0;
+        while ($i < $characters) {
+            $text .= substr($possible, mt_rand(0, strlen($possible) - 1), 1);
+            $i++;
+        }
+
+        Session::forget($name);
+        Session::put($name, md5($text));
+
+        $im = imagecreatetruecolor($width, $height);
+        $white = imagecolorallocate($im, 255, 255, 255);
+        $grey = imagecolorallocate($im, 128, 128, 128);
+        $black = imagecolorallocate($im, 0, 0, 0);
+        imagefilledrectangle($im, 0, 0, 399, $height, $white);
+        $noise_color = imagecolorallocate($im, 100, 120, 180);
+        $noise_color3 = imagecolorallocate($im, 0, 120, 180);
+        $noise_color2 = imagecolorallocate($im, 100, 120, 180);
+        for ($i = 0; $i < ($width * $height) / 3; $i++) {
+            imagefilledellipse($im, mt_rand(0, $width), mt_rand(0, $height), 1, 1, $noise_color);
+        }
+
+        /* generate random lines in background */
+        for ($i = 0; $i < ($width * $height) / 150; $i++) {
+            imageline($im, mt_rand(0, $width), mt_rand(0, $height), mt_rand(0, $width), mt_rand(0, $height), $noise_color2);
+            imageline($im, mt_rand(0, $width), mt_rand(0, $width), mt_rand(0, $height), mt_rand(0, $height), $noise_color3);
+        }
+
+        $item_space = ($width - 3) / $characters;
+        $max_font_size = 20;
+        $min_font_size = 14;
+        for ($i = 0; $i < $characters; $i++) {
+            $x = ($i * $item_space) + 5;
+            $font_size = rand(
+                $min_font_size,
+                $max_font_size
+            );
+            $y = rand(($height / 2), $height - 3);
+            imagettftext($im, $font_size, 0, $x, $y, $grey, $font, $text[$i]);
+            imagettftext($im, $font_size, 0, $x - 1, $y - 1, $black, $font, $text[$i]);
+        }
+        header('Content-type: image/png');
+
+        imagejpeg($im);
+        imagedestroy($im);
     }
 }

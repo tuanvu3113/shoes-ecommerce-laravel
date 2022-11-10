@@ -4,40 +4,32 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Http\Request;
 use App\Models\SecurityModel;
 use App\Models\BaseModel;
-use Illuminate\Support\Facades\Session;
 
 class DashboardController extends Controller
 {
     private $route;
     private $login;
+    private $title;
 
     function __construct()
     {
-        if (in_array('__construct', get_class_methods(get_parent_class($this)))) {
-            parent::__construct();
-        }
-        $this->route = 'home';
-        $menu = Session::get('menus');
-        $this->title = isset($menu[$this->route]) ? $menu[$this->route] : $this->route;
         $this->security_model = new SecurityModel();
         $this->base_model = new BaseModel();
+        $this->route = 'home';
+        $_SESSION["title"] = 'Home';
     }
 
     public function checkPermission($action = 'view')
     {
-        $class = get_class($this);
         $login = Session::get('login');
-
-        if (empty($login->username)) { //Chưa đăng nhập
-            return redirect('/admin');
-        } else if (!isset($login->params[$this->route]->$action)) {
+        if (!isset($login->params[$this->route]->$action)) {
             return redirect('/admin');
         }
     }
@@ -50,9 +42,11 @@ class DashboardController extends Controller
         }
         $_SESSION["title"] = 'Dashboard';
         $csrfHash = csrf_token();
-        $routes = $this->route;
         $infoChart = $this->qtyChart();
-        return view('Admin.home.view', compact('infoChart', 'routes', 'csrfHash'));
+        return view('Admin.home.view', compact(
+            'infoChart',
+            'csrfHash'
+        ));
     }
 
     public function qtyChart()
@@ -103,69 +97,24 @@ class DashboardController extends Controller
 
     function getNotify()
     {
-        $arrRender = [];
-        $arrRender['notify_order'] = '';
-        $arrRender['total_notify_order'] = 0;
-        $arrRender['notify_comment'] = 0;
-        $arrRender['list_notify_comment'] = '';
-        $arrRender['notify_reviews'] = '';
-        $arrRender['list_notify_review'] = '';
-        $arrRender['notify_contact'] = '';
-        $arrRender['list_notify_contact'] = '';
-        $arrRender['notify_events'] = '';
-        $arrRender['list_notify_events'] = '';
-
-        $sql = "
-            SELECT
-                c.code_order, a.ngay_dat_hang, a.id as id_notify, a.vat, c.qty, c.price, c.discount,
-                CONCAT(b.name, ' ', b.last_name) AS fullname,  e.google_name as fullname_google
-            FROM ecommerce_product_order a
-            LEFT JOIN ecommerce_product_detail_order c ON a.id = c.id_order
-            LEFT JOIN ecommerce_public_users b ON a.id_user = b.id
-            LEFT JOIN ecommerce_google_users e ON e.google_id = a.id_user
-            LEFT JOIN ecommerce_product d ON d.code = c.id_product
-            WHERE a.isdelete = 0
-                AND a.tinh_trang = 1
-                AND a.is_notify = 1
-            GROUP BY a.ngay_dat_hang
-            ORDER BY a.ngay_dat_hang DESC
-        ";
-        $query = DB::select($sql);
-        $html = "";
-        $total_price_order = $this->base_model->getTotalPrice();
-        if (!empty($query)) {
-            foreach ($query as $key => $value) {
-                // <i class="zmdi zmdi-edit text-info"></i>
-                // <i class="zmdi zmdi-delete text-danger"></i>
-                // <i class="zmdi zmdi-account text-success"></i>
-                // <i class="zmdi zmdi-flag text-warning"></i>
-                $full_name = !empty($value->fullname) ? $value->fullname : $value->fullname_google;
-                $total = isset($total_price_order[$value->code_order]) ? $total_price_order[$value->code_order]->price : 0;
-                $html .= '<li>';
-                $html .= '<i class="zmdi zmdi-balance-wallet text-success"></i>';
-                $html .= '<a href="javascript:void(0)" title="Close"><i class="zmdi zmdi-close closeNotify" id_order="' . trim($value->id_notify) . '" style="float: right;position: relative; color: grey;"></i></a>';
-                $html .= '<strong>' . $full_name . ' +' . $total . ' VNĐ </strong>';
-                $html .= '<p><strong>Order#:</strong> ' . $value->code_order . '</p>';
-                $html .= '<small class="text-muted">' . $this->base_model->time_elapsed_string($value->ngay_dat_hang) . '</small>';
-                $html .= '</li>';
-            }
-        }
         $getTotalStatusComment = $this->base_model->getTotalStatusComment();
         $getWarningContact = $this->base_model->getNotifyContact();
         $getWarningEvents = $this->base_model->getNotifyEvents();
         $getNotifyOrder = $this->base_model->getNotifyOrder();
         $getNotifyReviews = $this->base_model->getNotifyReviews();
+
+        $notify_order = !empty($getNotifyOrder['html']) ? $getNotifyOrder['html'] : '';
+        $list_notify_comment = $getTotalStatusComment['html'];
+        $list_notify_review = $getNotifyReviews['list_review'];
+        $list_notify_contact = $getWarningContact['list_notify_contact'];
+        $list_notify_events = $getWarningEvents['list_notify_events'];
         $arrRender = [];
-        $arrRender['notify_order'] = !empty($getNotifyOrder['html']) ? $getNotifyOrder['html'] : '';
         $arrRender['total_notify_order'] = !empty($getNotifyOrder['total']) ? $getNotifyOrder['total'] : 0;
         $arrRender['notify_comment'] = !empty($getTotalStatusComment['pending_notify']) ? $getTotalStatusComment['pending_notify'] : 0;
-        $arrRender['list_notify_comment'] = $getTotalStatusComment['html'];
         $arrRender['notify_reviews'] = $getNotifyReviews['total'];
-        $arrRender['list_notify_review'] = $getNotifyReviews['list_review'];
         $arrRender['notify_contact'] = $getWarningContact['total_notify_contact'];
-        $arrRender['list_notify_contact'] = $getWarningContact['list_notify_contact'];
         $arrRender['notify_events'] = $getWarningEvents['total_notify_events'];
-        $arrRender['list_notify_events'] = $getWarningEvents['list_notify_events'];
+        $arrRender['list_notify'] = $notify_order . $list_notify_comment . $list_notify_review . $list_notify_contact . $list_notify_events . $list_notify_events;
         echo json_encode($arrRender);
         die;
     }

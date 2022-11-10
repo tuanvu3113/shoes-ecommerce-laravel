@@ -52,7 +52,7 @@
                                     </div>
                                     <div style="width: 45%; margin-left: 10%;">
                                         <div class="input-group">
-                                            <!-- <img title="Làm mới" src="/admin/login/captcha/543534.html" id="icaptcha" style="width: 125px; height: 37px;"> -->
+                                            <img title="Làm mới" src="/admin/captcha/543534.html" id="icaptcha" style="width: 125px; height: 37px;">
                                         </div>
                                     </div>
                                     <div style="display: flex;align-items: center; width: 10%; margin-left: 5%;">
@@ -114,7 +114,7 @@
             <!-- end auth full page content -->
         </div>
         <!-- end col -->
-        <div class="col-xxl-9 col-lg-8 col-md-7">
+        <div class="col-xxl-9 col-lg-8 col-md-7" style="display: none;">
             <div class="auth-bg pt-md-5 p-4 d-flex">
                 <div class="bg-overlay bg-primary"></div>
                 <ul class="bg-bubbles">
@@ -208,7 +208,6 @@
 <script>
     var formSearch = 'formSearch';
     var gridDatas = '';
-    var controller = '/';
     $(document).ready(function() {
         $("#username").focus();
         var remember = localStorage.getItem('remember');
@@ -224,7 +223,7 @@
         }
         $("#reload").click(function() {
             var id = randomNumberFromRange(100, 1000);
-            $("#icaptcha").attr("src", controller + "/captcha/" + id + ".html");
+            $("#icaptcha").attr("src", "/admin/captcha/" + id + ".html");
         });
         $("#login").click(function() {
             login();
@@ -320,14 +319,14 @@
                     }
                 } else {
                     var id = randomNumberFromRange(100, 1000);
-                    // $("#icaptcha").attr("src", "/admin/login/captcha/" + id + ".html");
+                    $("#icaptcha").attr("src", "/admin/captcha/" + id + ".html");
                     showMessage('Warning', "Tài khoản hoặc Mật khẩu không đúng.", 'warning');
                 }
             },
             error: function() {
                 loadingForm(false);
                 var id = randomNumberFromRange(100, 1000);
-                $("#icaptcha").attr("src", "/admin/login/captcha/" + id + ".html");
+                $("#icaptcha").attr("src", "/admin/captcha/" + id + ".html");
             }
         });
     }

@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class AdminViewServiceProvider extends ServiceProvider
 {
@@ -27,10 +28,13 @@ class AdminViewServiceProvider extends ServiceProvider
     {
         // Render data menu, profile ra các trang trong Admin
         View::composer('Admin.*', function ($view) {
-            $menu = \App\Http\Controllers\Admin\MenuController::getMenu();
-            $profile = \App\Http\Controllers\Admin\ProfileController::getProfile();
-            $breadcrumb = \App\Http\Controllers\Admin\BreadCrumbController::getBreadcrumb();
-            $view->with(compact('menu', 'profile', 'breadcrumb'));
+            $login = Session::get('login');
+            if (!empty($login->username)) {
+                $menu = \App\Http\Controllers\Admin\MenuController::getMenu();
+                $profile = \App\Http\Controllers\Admin\ProfileController::getProfile();
+                $breadcrumb = \App\Http\Controllers\Admin\BreadCrumbController::getBreadcrumb();
+                $view->with(compact('menu', 'profile', 'breadcrumb'));
+            }
         });
     }
 }
